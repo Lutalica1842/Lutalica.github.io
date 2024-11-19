@@ -3,204 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Design Core: Player Experience</title>
+    <title>Game Design: Enhancing Player Experience</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Orbitron', sans-serif;
-            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            background-color: #f0f0f0;
+            color: #333;
         }
-
         header {
-            background: linear-gradient(135deg, #333, #444);
-            color: #fff;
-            padding: 2rem 0;
+            background: #ffffff;
+            padding: 2em;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border-bottom: 2px solid #ccc;
         }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
+        header h1 {
+            color: #000;
+            font-size: 3em;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
         }
-
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        nav ul li a:hover {
-            color: #ff4081;
-        }
-
         .content {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: #2a2a2a;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            max-width: 1200px;
+            margin: 2em auto;
+            padding: 1em;
         }
-
-        footer {
-            background: linear-gradient(135deg, #444, #333);
-            color: #fff;
+        .module {
+            margin-bottom: 2em;
+            background: #ffffff;
+            padding: 2em;
+            border-radius: 15px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+            border: 1px solid #ccc;
+            position: relative;
+            overflow: hidden;
+        }
+        .module h2 {
+            color: #000;
+            font-size: 2.2em;
+            border-bottom: 2px solid #000;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
+        }
+        .module p {
+            line-height: 1.8;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2em;
+        }
+        .case-study {
+            background: #ffffff;
+            padding: 1.5em;
+            border-radius: 15px;
+            border: 1px solid #000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .case-study:hover {
+            transform: translateY(-5px);
+        }
+        .case-study h3 {
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
+        }
+        .interactive {
             text-align: center;
-            padding: 2rem 0;
-            margin-top: 2rem;
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
+            margin: 3em 0;
+            border-top: 2px solid #000;
+            padding-top: 2em;
+            background: linear-gradient(135deg, #f5e6c4, #e0dac0);
+            border-radius: 15px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
         }
-
-        #game {
-            text-align: center;
-        }
-
-        #startGameButton, #changeColorButton {
-            background-color: #444;
+        button {
+            background-color: #007bff;
             color: #fff;
+            padding: 1em 2em;
             border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1.2rem;
+            border-radius: 30px;
             cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s, transform 0.2s;
-            margin: 0.5rem;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
         }
-
-        #startGameButton:hover, #changeColorButton:hover {
-            background-color: #555;
-            transform: scale(1.05);
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
         }
-
-        #gameCanvas {
-            margin-top: 1rem;
-            border: 2px solid #444;
-            background: #111;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        /* Game section styles */
+        #game-container {
+            margin: 3em auto;
+            width: 80%;
+            max-width: 600px;
+            height: 300px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            border: 2px solid #ccc;
         }
-
-        .neon-text {
-            color: #fff;
-            text-shadow: 0 0 5px #fff, 0 0 10px #ff4081, 0 0 20px #ff4081, 0 0 40px #ff4081;
+        #runner {
+            width: 50px;
+            height: 50px;
+            background: #ff4757;
+            position: absolute;
+            bottom: 0;
+            left: 50px;
+            border-radius: 10%;
+        }
+        .crack {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            position: absolute;
+            bottom: 0;
+        }
+    </style>
+    <style>
+        #score {
+            font-size: 1.5em;
+            text-align: center;
+            margin-top: 1em;
+            color: #000;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <h1 class="neon-text">Game Design Core: Player Experience</h1>
-            <p>The Heart of Game Success: Understanding Player Experience</p>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="#overview">Overview</a></li>
-                <li><a href="factors.html">Design Factors</a></li>
-                <li><a href="#game">Mini Game</a></li>
-            </ul>
-        </nav>
+        <h1>Game Design: Enhancing Player Experience</h1>
+        <p>Discover why player experience is a core factor in making a game successful.</p>
     </header>
-    
-    <section id="overview">
-        <div class="content">
-            <h2 class="neon-text">Player Experience Overview</h2>
-            <p>Player experience is the emotional and interactive journey of players within a game world. It directly impacts market performance and player satisfaction, making it a crucial element of game design.</p>
-        </div>
-    </section>
+    <main class="content">
+        <!-- Module 1: What is Player Experience? -->
+        <section class="module">
+            <h2>What is Player Experience?</h2>
+            <p>Player experience (PX) refers to the emotions and overall interaction players have within the game. It includes various aspects such as storyline, character creation, visual and sound effects, and interaction design, all of which significantly influence the player's emotional engagement and satisfaction.</p>
+        </section>
 
-    <section id="game">
-        <div class="content">
-            <h2 class="neon-text">Mini Game: Player Experience Challenge</h2>
-            <p>Test your reflexes and experience the importance of intuitive design! Click the button below to start the mini game.</p>
-            <button id="startGameButton">Start Game</button>
-            
-            <button id="changeColorButton" style="display: none;">Change Ball Color</button>
+        <!-- Module 2: Factors Affecting Player Experience -->
+        <section class="module">
+            <h2>Factors Affecting Player Experience</h2>
+            <div class="grid">
+                <div class="case-study">
+                    <h3>Game Storyline and Character Design</h3>
+                    <p>The game storyline and character design play a vital role in shaping the player experience. A compelling storyline and colorful characters can captivate players, creating a sense of emotional resonance and engagement.</p>
+                </div>
+                <div class="case-study">
+                    <h3>Visual and Sound Effects</h3>
+                    <p>High-quality visual and sound effects can significantly enhance the player's immersion and sense of presence in the game world, making them feel more involved.</p>
+                </div>
+                <div class="case-study">
+                    <h3>Interaction Design and Game Mechanics</h3>
+                    <p>Interaction design and game mechanics determine the playability and enjoyment of a game. Smooth operations and intuitive interfaces help improve user satisfaction and overall experience.</p>
+                </div>
+                <div class="case-study">
+                    <h3>Social Interaction and Multiplayer Experience</h3>
+                    <p>Social interaction, especially in multiplayer games, enhances the sense of community and teamwork, contributing to a more enjoyable gaming experience.</p>
+                </div>
+            </div>
+        </section>
 
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-        </div>
-    </section>
+        <!-- Module 3: Evaluation Methods and Tools -->
+        <section class="module">
+            <h2>Evaluation Methods and Tools for Player Experience</h2>
+            <p>Evaluating player experience is crucial in game design. Common methods include:</p>
+            <ul>
+                <li><strong>Quantitative Methods</strong>: Surveys and experimental designs to gather objective data on player satisfaction.</li>
+                <li><strong>Qualitative Methods</strong>: User interviews and observations to understand player emotions and needs more deeply.</li>
+                <li><strong>Playtesting</strong>: Involving real players to gather feedback and improve game design iteratively.</li>
+            </ul>
+        </section>
 
+        <!-- Module 4: Future Research Directions -->
+        <section class="module">
+            <h2>Future Research Directions in Player Experience</h2>
+            <p>Emerging technologies are reshaping player experience. AI-based optimization and VR/AR applications are expected to bring more personalized, immersive experiences to players. These technologies can dynamically adjust game content to suit individual preferences, making games more engaging and responsive.</p>
+        </section>
+
+        <!-- Game Section -->
+        <section class="module">
+            <h2>Interactive Running Game</h2>
+            <div id="score">Score: <span id="score-value">0</span></div>
+            <div id="game-container">
+                <div id="runner"></div>
+                <div class="crack" style="left: 300px;"></div>
+                <div class="crack" style="left: 600px;"></div>
+            </div>
+        </section>
+
+        <!-- Interactive Section -->
+        <section class="interactive">
+            <h2>How Important Do You Think Player Experience is for Games?</h2>
+            <button>Join the Discussion</button>
+        </section>
+    </main>
     <script>
-        const startGameButton = document.getElementById('startGameButton');
-        
-        
-        const changeColorButton = document.getElementById('changeColorButton');
-        const gameCanvas = document.getElementById('gameCanvas');
-        const ctx = gameCanvas.getContext('2d');
-        let gameInterval;
-        let bounceSound = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Example sound effect
+        const runner = document.getElementById('runner');
+        const gameContainer = document.getElementById('game-container');
+        const cracks = document.querySelectorAll('.crack');
+        let isJumping = false;
+        let position = 0;
+        let score = 0;
+        const scoreElement = document.getElementById('score-value');
 
-        startGameButton.addEventListener('click', () => {
-            
-            
-            changeColorButton.style.display = 'inline-block';
-            gameCanvas.style.display = 'block';
-            startGame();
-        });
-
-        
-        
-        changeColorButton.addEventListener('click', () => {
-            ballColor = getRandomColor();
-        });
-
-        function startGame() {
-            let x = gameCanvas.width / 2;
-            let y = gameCanvas.height - 30;
-            let dx = 2;
-            let dy = -2;
-            const ballRadius = 10;
-            let ballColor = '#ff4081';
-
-            function drawBall() {
-                ctx.beginPath();
-                ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-                ctx.fillStyle = ballColor;
-                ctx.fill();
-                ctx.closePath();
-            }
-
-            function updateGameArea() {
-                ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-                drawBall();
-
-                if (x + dx > gameCanvas.width - ballRadius || x + dx < ballRadius) {
-                    dx = -dx;
-                    bounceSound.play(); // Play sound effect on bounce
-                    ballColor = getRandomColor(); // Change ball color on bounce
+        function jump() {
+            if (isJumping) return;
+            isJumping = true;
+            let count = 0;
+            const jumpInterval = setInterval(() => {
+                if (count < 25) {
+                    position += 4;
+                    runner.style.bottom = position + 'px';
+                } else if (count < 50) {
+                    position -= 4;
+                    runner.style.bottom = position + 'px';
+                } else {
+                    clearInterval(jumpInterval);
+                    isJumping = false;
                 }
-                if (y + dy > gameCanvas.height - ballRadius || y + dy < ballRadius) {
-                    dy = -dy;
-                    bounceSound.play(); // Play sound effect on bounce
-                    ballColor = getRandomColor(); // Change ball color on bounce
-                }
-
-                x += dx;
-                y += dy;
-            }
-
-            function getRandomColor() {
-                const letters = '0123456789ABCDEF';
-                let color = '#';
-                for (let i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
-                }
-                return color;
-            }
-
-            gameInterval = setInterval(updateGameArea, 10);
+                count++;
+            }, 20);
         }
+
+        function updateScore() {
+            score++;
+            scoreElement.textContent = score;
+        }
+
+        function resetScore() {
+            score = 0;
+            scoreElement.textContent = score;
+        }
+
+        function moveRunner() {
+            let leftPosition = 50;
+            setInterval(() => {
+                if (leftPosition > gameContainer.offsetWidth) {
+                    leftPosition = -50;
+                }
+                leftPosition += 2;
+                runner.style.left = leftPosition + 'px';
+
+                cracks.forEach(crack => {
+                    const crackLeft = parseInt(crack.style.left);
+                    if (leftPosition + 50 > crackLeft && leftPosition < crackLeft + 10) {
+                        if (position === 0) {
+                            // Runner falls into crack
+                            leftPosition = 50;
+                            resetScore();
+                        } else {
+                            // Runner successfully jumps over the crack
+                            updateScore();
+                        }
+                    }
+                });
+            }, 20);
+        }
+
+        gameContainer.addEventListener('click', jump);
+        moveRunner();
     </script>
 </body>
 </html>
