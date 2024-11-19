@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Design Core: Player Experience</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        header {
+            background: linear-gradient(135deg, #333, #444);
+            color: #fff;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff4081;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #2a2a2a;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #444, #333);
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        #game {
+            text-align: center;
+        }
+
+        #startGameButton, #changeColorButton {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 0.5rem;
+        }
+
+        #startGameButton:hover, #changeColorButton:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        #gameCanvas {
+            margin-top: 1rem;
+            border: 2px solid #444;
+            background: #111;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .neon-text {
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #ff4081, 0 0 20px #ff4081, 0 0 40px #ff4081;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 class="neon-text">Game Design Core: Player Experience</h1>
+            <p>The Heart of Game Success: Understanding Player Experience</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="factors.html">Design Factors</a></li>
+                <li><a href="#game">Mini Game</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="overview">
+        <div class="content">
+            <h2 class="neon-text">Player Experience Overview</h2>
+            <p>Player experience is the emotional and interactive journey of players within a game world. It directly impacts market performance and player satisfaction, making it a crucial element of game design.</p>
+        </div>
+    </section>
+
+    <section id="game">
+        <div class="content">
+            <h2 class="neon-text">Mini Game: Player Experience Challenge</h2>
+            <p>Test your reflexes and experience the importance of intuitive design! Click the button below to start the mini game.</p>
+            <button id="startGameButton">Start Game</button>
+            
+            <button id="changeColorButton" style="display: none;">Change Ball Color</button>
+
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+        </div>
+    </section>
+
+    <script>
+        const startGameButton = document.getElementById('startGameButton');
+        
+        
+        const changeColorButton = document.getElementById('changeColorButton');
+        const gameCanvas = document.getElementById('gameCanvas');
+        const ctx = gameCanvas.getContext('2d');
+        let gameInterval;
+        let bounceSound = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Example sound effect
+
+        startGameButton.addEventListener('click', () => {
+            
+            
+            changeColorButton.style.display = 'inline-block';
+            gameCanvas.style.display = 'block';
+            startGame();
+        });
+
+        
+        
+        changeColorButton.addEventListener('click', () => {
+            ballColor = getRandomColor();
+        });
+
+        function startGame() {
+            let x = gameCanvas.width / 2;
+            let y = gameCanvas.height - 30;
+            let dx = 2;
+            let dy = -2;
+            const ballRadius = 10;
+            let ballColor = '#ff4081';
+
+            function drawBall() {
+                ctx.beginPath();
+                ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = ballColor;
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function updateGameArea() {
+                ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+                drawBall();
+
+                if (x + dx > gameCanvas.width - ballRadius || x + dx < ballRadius) {
+                    dx = -dx;
+                    bounceSound.play(); // Play sound effect on bounce
+                    ballColor = getRandomColor(); // Change ball color on bounce
+                }
+                if (y + dy > gameCanvas.height - ballRadius || y + dy < ballRadius) {
+                    dy = -dy;
+                    bounceSound.play(); // Play sound effect on bounce
+                    ballColor = getRandomColor(); // Change ball color on bounce
+                }
+
+                x += dx;
+                y += dy;
+            }
+
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            gameInterval = setInterval(updateGameArea, 10);
+        }
+    </script>
+</body>
+</html>
