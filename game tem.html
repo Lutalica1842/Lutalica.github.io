@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点击小怪物游戏</title>
+    <title>Catch the Ball Game</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Unbounded, sans-serif;
             text-align: center;
             background-color: #f0f0f0;
         }
-        #monster {
+        #ball {
             width: 50px;
             height: 50px;
             position: absolute;
@@ -28,30 +28,85 @@
             color: red;
             display: none;
         }
-        #sound-option {
+        #sound-option, #features-option {
             margin-top: 20px;
         }
-        #leaderboard {
-            margin-top: 30px;
+        #restart-button {
+            margin-top: 20px;
+            padding: 10px 20px;
             font-size: 20px;
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+        }
+        #high-score {
+            font-size: 24px;
+            margin-top: 20px;
+            color: green;
+        }
+        @media (max-width: 600px) {
+            #ball {
+                width: 30px;
+                height: 30px;
+            }
+            #score, #timer, #high-score {
+                font-size: 20px;
+            }
+            #game-over {
+                font-size: 28px;
+            }
+            #restart-button {
+                padding: 8px 16px;
+                font-size: 18px;
+            }
+        }
+    #homepage-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            position: absolute;
+            left: 50%;
+            top: 60%;
+            transform: translate(-50%, 0);
         }
     </style>
 </head>
 <body>
-    <h1>点击小怪物游戏</h1>
-    <div id="score">得分: 0</div>
-    <div id="timer">剩余时间: 30 秒</div>
-    <div id="monster"></div>
-    <div id="game-over">游戏结束！</div>
+    <h1>Catch the Ball Game</h1>
+    <div id="score">Score: 0</div>
+    <div id="timer">Time left: 30 seconds</div>
+    <div id="high-score">High Score: 0</div>
+    <div id="ball"></div>
+    <div id="game-over">Game Over!</div>
     <div id="sound-option">
         <label>
-            <input type="checkbox" id="enable-sound" checked> 启用音效
+            <input type="checkbox" id="enable-sound" checked> Enable Sound
         </label>
     </div>
-    <div id="leaderboard">
-        <h2>排行榜</h2>
-        <ol id="leaderboard-list"></ol>
+    <div id="features-option">
+        <label>
+            <input type="checkbox" id="enable-difficulty"> Increase Difficulty Over Time
+        </label><br>
+        <label>
+            <input type="checkbox" id="enable-combo"> Enable Combo Rewards
+        </label><br>
+        <label>
+            <input type="checkbox" id="enable-visual-feedback"> Enable Click Animation
+        </label><br>
+        <label>
+            <input type="checkbox" id="enable-background-change"> Background Change During Countdown
+        </label>
     </div>
+    <button id="reset-button" onclick="startGame()">Reset Game</button>
+    <button id="restart-button" onclick="startGame()">Restart Game</button>
+    <button id="homepage-button" onclick="window.location.href='index.html'">Go to Homepage</button>
     
     <audio id="click-sound" src="https://www.fesliyanstudios.com/play-mp3/387"></audio>
     <audio id="game-over-sound" src="https://www.fesliyanstudios.com/play-mp3/562"></audio>
@@ -59,69 +114,102 @@
     <script>
         let score = 0;
         let timeLeft = 30;
-        const monster = document.getElementById('monster');
+        let comboCount = 0;
+        let comboTimeout;
+        let timerRunning = false;
+        const ball = document.getElementById('ball');
         const scoreDisplay = document.getElementById('score');
         const timerDisplay = document.getElementById('timer');
         const gameOverDisplay = document.getElementById('game-over');
         const clickSound = document.getElementById('click-sound');
         const gameOverSound = document.getElementById('game-over-sound');
         const enableSound = document.getElementById('enable-sound');
-        const leaderboardList = document.getElementById('leaderboard-list');
+        const restartButton = document.getElementById('restart-button');
+        const enableDifficulty = document.getElementById('enable-difficulty');
+        const enableCombo = document.getElementById('enable-combo');
+        const enableVisualFeedback = document.getElementById('enable-visual-feedback');
+        const enableBackgroundChange = document.getElementById('enable-background-change');
+        const highScoreDisplay = document.getElementById('high-score');
         let gameInterval;
         
-        function moveMonster() {
+        // Load high score from local storage
+        let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
+        highScoreDisplay.textContent = `High Score: ${highScore}`;
+        
+        function moveBall() {
             const maxX = window.innerWidth - 50;
             const maxY = window.innerHeight - 50;
             const x = Math.max(0, Math.floor(Math.random() * maxX));
             const y = Math.max(0, Math.floor(Math.random() * maxY));
-            monster.style.left = x + 'px';
-            monster.style.top = y + 'px';
-            monster.style.transform = 'scale(1.2)';
-            setTimeout(() => monster.style.transform = 'scale(1)', 100);
+            ball.style.left = x + 'px';
+            ball.style.top = y + 'px';
+            if (enableVisualFeedback.checked) {
+                ball.style.transform = 'scale(1.2)';
+                setTimeout(() => ball.style.transform = 'scale(1)', 100);
+            }
         }
         
         function increaseScore() {
             score++;
-            scoreDisplay.textContent = `得分: ${score}`;
+            if (enableCombo.checked) {
+                comboCount++;
+                if (comboTimeout) clearTimeout(comboTimeout);
+                comboTimeout = setTimeout(() => comboCount = 0, 1000);
+                score += comboCount - 1; // Combo reward
+            }
+            scoreDisplay.textContent = `Score: ${score}`;
             if (enableSound.checked) {
                 clickSound.play();
             }
-            moveMonster();
+            moveBall();
         }
         
         function updateTimer() {
+            if (!timerRunning) return;
             timeLeft--;
-            timerDisplay.textContent = `剩余时间: ${timeLeft} 秒`;
+            timerDisplay.textContent = `Time left: ${timeLeft} seconds`;
+            if (enableBackgroundChange.checked && timeLeft <= 10) {
+                document.body.style.backgroundColor = timeLeft % 2 === 0 ? '#ffcccc' : '#f0f0f0';
+            }
             if (timeLeft <= 0) {
                 clearInterval(gameInterval);
-                monster.style.display = 'none';
+                timerRunning = false;
+                ball.style.display = 'none';
                 gameOverDisplay.style.display = 'block';
+                restartButton.style.display = 'block';
                 if (enableSound.checked) {
                     gameOverSound.play();
                 }
-                updateLeaderboard();
+                // Update high score if the current score is greater
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('highScore', highScore);
+                    highScoreDisplay.textContent = `High Score: ${highScore}`;
+                }
+            } else if (enableDifficulty.checked && timeLeft % 5 === 0) {
+                // Increase difficulty every 5 seconds
+                clearInterval(gameInterval);
+                gameInterval = setInterval(updateTimer, Math.max(500, 1000 - (30 - timeLeft) * 20));
             }
         }
         
         function startGame() {
             score = 0;
             timeLeft = 30;
-            scoreDisplay.textContent = `得分: ${score}`;
-            timerDisplay.textContent = `剩余时间: ${timeLeft} 秒`;
+            comboCount = 0;
+            scoreDisplay.textContent = `Score: ${score}`;
+            timerDisplay.textContent = `Time left: ${timeLeft} seconds`;
             gameOverDisplay.style.display = 'none';
-            monster.style.display = 'block';
-            moveMonster();
+            restartButton.style.display = 'none';
+            ball.style.display = 'block';
+            document.body.style.backgroundColor = '#f0f0f0';
+            moveBall();
+            clearInterval(gameInterval);
+            timerRunning = true;
             gameInterval = setInterval(updateTimer, 1000);
         }
         
-        function updateLeaderboard() {
-            const playerName = prompt("请输入您的名字:") || "匿名玩家";
-            const leaderboardEntry = document.createElement('li');
-            leaderboardEntry.textContent = `${playerName}: ${score} 分`;
-            leaderboardList.appendChild(leaderboardEntry);
-        }
-        
-        monster.addEventListener('click', increaseScore);
+        ball.addEventListener('click', increaseScore);
         
         startGame();
     </script>
